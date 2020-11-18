@@ -1,0 +1,14 @@
+* pyim-tsinghua-dict
+用[[http://thuocl.thunlp.org/][THUOCL：清华大学开放中文词库]] 数据建立的 [[https://github.com/tumashu/pyim][pyim 输入法]] 的词库. 已基于词频统计信息DF值(Document Frequency)优化.
+
+DF值小于等于10的词都被排除,相对原始数据词汇量少了一半.可以提高输入法的速度，减少内存消耗.
+
+* 安装和使用
+请参考 pyim 输入法主页和文档将"pyim-tsinghua-dict.pyim"放入指定目录并配置.
+
+"words-with-freq-sorted-by-pinyin.csv" 是把词库的数据另存为csv格式. 以供研究.
+
+* 版权
+使用了清华大学开放中文词库, 韩世依, 张钰晖, 马云山, 涂存超, 郭志芃, 刘知远, 孙茂松. THUOCL：清华大学开放中文词库. 2016.
+
+由我编辑整理，仅供个人研究、交流学习使用，不涉及商业盈利目的。如涉及版权问题，请联系我予以更改或删除.
