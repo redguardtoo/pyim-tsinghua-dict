@@ -4,9 +4,18 @@
 DF值小于等于10的词都被排除,相对原始数据词汇量少了一半.可以提高输入法的速度，减少内存消耗.
 
 * 安装和使用
-请参考 pyim 输入法主页和文档将"pyim-tsinghua-dict.pyim"放入指定目录并配置.
+将 pyim-tsinghua-dict 添加到 load-path, 然后：
+#+begin_src emacs-lisp
+(require 'pyim-tsinghua-dict)
+(pyim-tsinghua-dict-enable)
+#+end_src
 
-"words-with-freq-sorted-by-pinyin.csv" 是把词库的数据另存为csv格式. 以供研究.
+除了上述方法，用户也可以运行 `pyim-dict-manager' 命令，然后按提示添加 pyim-tsinghua-dict.pyim 词库文件。
+
+* Utils 相关文件
+1. "mkdict.py" 是生成 pyim-tsinghua-dict.pyim 的工具。
+2. "hanzi.csv" 记录着汉字对应的拼音。
+3. "words-with-freq-sorted-by-pinyin.csv" 是把词库的数据另存为csv格式. 以供研究。
 
 * 版权
 使用了清华大学开放中文词库, 韩世依, 张钰晖, 马云山, 涂存超, 郭志芃, 刘知远, 孙茂松. THUOCL：清华大学开放中文词库. 2016.
