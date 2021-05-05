@@ -3,7 +3,7 @@
 ;; Copyright (C) 2021 Chen Bin <chenbin.sh@gmail.com>
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
-;; URL: https://github.com/p1uxtar/pyim-tsinghua-dict
+;; URL: https://github.com/redguardtoo/pyim-tsinghua-dict
 ;; Version: 0.0.1
 ;; Package-Requires: ((pyim "3.7"))
 ;; Keywords: convenience, Chinese, pinyin, input-method, complete
