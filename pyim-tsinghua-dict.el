@@ -32,7 +32,7 @@
 ;; Please read README.org.
 
 ;;; Code:
-(require 'pyim)
+(require 'pyim-dict)
 
 ;;;###autoload
 (defun pyim-tsinghua-dict-enable ()
@@ -42,7 +42,7 @@
                (locate-library "pyim-tsinghua-dict.el")))
          (file (concat dir "pyim-tsinghua-dict.pyim")))
     (when (file-exists-p file)
-      (if (featurep 'pyim)
+      (if (featurep 'pyim-dict)
           (pyim-extra-dicts-add-dict
            `(:name "tsinghua-dict-elpa" :file ,file :elpa t))
         (message "pyim 没有安装，pyim-tsinghua-dict 启用失败。")))))
