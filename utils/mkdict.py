@@ -24,7 +24,7 @@ if __name__ == "__main__":
     - cut off words with DF lower (current way, easier to use?)
     '''
     parser.add_argument('df_threshold', type=int, nargs='?',
-                        default=5000,
+                        default=6000,
                         help='cut off DF lower')
     parser.add_argument('outfile', nargs='?', type=argparse.FileType('w'),
                         default=open("../pyim-tsinghua-dict.pyim", "wt")

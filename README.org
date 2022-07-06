@@ -4,7 +4,16 @@
 DF值小于等于10的词都被排除,相对原始数据词汇量少了一半.可以提高输入法的速度，减少内存消耗.
 
 * 安装和使用
-将 pyim-tsinghua-dict 添加到 load-path, 然后：
+将 pyim-tsinghua-dict (git repo.) 添加到 load-path, 然后：
+#+begin_src bash
+cd ./utils
+# ensure at least Python 3.8 in PATH
+./mkdict.py -h
+./mkdict.py   <params>
+
+# ensure file in root dir: pyim-tsinghua-dict.pyim
+#+end_src
+
 #+begin_src emacs-lisp
 (require 'pyim-tsinghua-dict)
 (pyim-tsinghua-dict-enable)
