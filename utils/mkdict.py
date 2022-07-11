@@ -1,66 +1,83 @@
-#!/usr/bin/env python
-def is_unique(items, item):
-    for i in items:
-        if(i[1] == item[1]):
-            return False
-    return True
+#!/usr/bin/env python3
+# -*- coding: utf-8-unix -*-
+
+import argparse
+import collections
+import logging
+logging.basicConfig(format='%(levelname)-7s :%(lineno)4d %(relativeCreated)9dms: %(message)s', datefmt='%H:%M:%S', level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+debug = logger.debug   # debug('xx %s', v)
+info = logger.info
+error = logger.error
 
 
-def filter_word_list(word_list):
-    if (len(word_list) <= 1):
-        return word_list
-    result = []
-    items = sorted(word_list, key=lambda a: a[1])
-    for item in items:
-        if(len(result) == 0):
-            result.append(item)
-        elif is_unique(result, item):
-            result.append(item)
+def get_words_line(pinyin, d):
+    # debug("%s %s", pinyin, d)
+    return "%s %s" % (pinyin, ' '.join(k for (k,c) in d.most_common()))
 
-    # sort by freq this time
-    return sorted(result, key=lambda a: a[2], reverse=True)
-
-
-def print_words(word_list_same_sound):
-    if len(word_list_same_sound) > 0:
-        items = filter_word_list(word_list_same_sound)
-
-        # # ouput csv with unique words
-        # for item in items:
-        #     print('%s,%s,%s' % (item[0],item[1],item[2]))
-
-        # output pyim dictionary
-        print("%s %s" % (items[0][0], ' '.join(map(lambda a: a[1], items))))
 
 if __name__ == "__main__":
-    hanzi_items = []
-    for l in open("hanzi.csv", "r").readlines():
-        hanzi_items.append(l.strip().split(","))
+    parser = argparse.ArgumentParser(description='Generate .pyim')
+    '''
+    2 ways to restrict output:
+    - pick top x words (by freq)
+    - cut off words with DF lower (current way, easier to use?)
+    '''
+    parser.add_argument('df_threshold', type=int, nargs='?',
+                        default=6200,
+                        help='cut off DF lower')
+    parser.add_argument('outfile', nargs='?', type=argparse.FileType('w'),
+                        default=open("../pyim-tsinghua-dict.pyim", "wt")
+                        )
+    args = parser.parse_args()
+    
+    debug('%s', args)
 
-    j = 0
+    try:
+        hanzi_items = [l.strip().split(",") for l in open("hanzi.csv", "r")]
+        LEN_HANZI = len(hanzi_items)
+        
+        j = 0
 
-    lines = open("words-with-freq-sorted-by-pinyin.csv", "r").readlines()
-    word_list_same_sound = []
-    old_pinyin = ""
+        args.outfile.write(";; -*- coding: utf-8 -*--\n")
+        
+        same_sound_word2freq = collections.Counter()
+        old_pinyin = ""
+        for line in open("words-with-freq-sorted-by-pinyin.csv", "r"):
+            a = line.strip().split(",")
+            pinyin = a[0]
+            word = a[1]
+            freq = int(a[2])
+            # to aid better choice of df_threshold
+            # todo p2 random pick and output word close to threshold
+            if freq < args.df_threshold:
+                # skip
+                continue
 
-    print(";; -*- coding: utf-8 -*--")
-    for index, line in enumerate(lines):
-        a = line.strip().split(",")
-        pinyin = a[0]
-        word = a[1]
-        freq = a[2]
+            if old_pinyin == pinyin:
+                same_sound_word2freq[word] = max(same_sound_word2freq[word], freq)
+            else:
+                if len(same_sound_word2freq) > 0:
+                    # if not the case of first line
+                    args.outfile.write(get_words_line(old_pinyin, same_sound_word2freq))
+                    args.outfile.write("\n")
 
-        if old_pinyin == pinyin:
-            word_list_same_sound.append((pinyin, word, int(freq)))
-        else:
-            print_words(word_list_same_sound)
+                same_sound_word2freq.clear()
+                same_sound_word2freq[word] = freq
+                old_pinyin = pinyin
 
-            word_list_same_sound = []
-            word_list_same_sound.append((pinyin, word, int(freq)))
-            old_pinyin = pinyin
-
-        while(j < len(hanzi_items) and hanzi_items[j][0] <= pinyin.split('-')[0]):
-            print('%s %s' % (hanzi_items[j][0], hanzi_items[j][1]))
+            pinyin1st = pinyin.split('-')[0]
+            while(j < LEN_HANZI and hanzi_items[j][0] <= pinyin1st):
+                args.outfile.write('%s %s\n' % (hanzi_items[j][0], hanzi_items[j][1]))
+                j = j + 1
+        debug(f'{j=} {LEN_HANZI=}')
+        while(j < LEN_HANZI):
+            args.outfile.write('%s %s\n' % (hanzi_items[j][0], hanzi_items[j][1]))
             j = j + 1
 
-    print_words(word_list_same_sound)
+        args.outfile.write(get_words_line(pinyin, same_sound_word2freq))
+        args.outfile.write("\n")
+    except Exception as ex:
+        logger.debug(ex, exc_info=1)
+    finally:
+        args.outfile.close()
